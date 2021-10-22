@@ -34,6 +34,8 @@ class DataLoader(object):
             sequences_names = sequences if isinstance(sequences, list) else [sequences]
         self.sequences = defaultdict(dict)
 
+        self._check_directories()
+
         for seq in sequences_names:
             images = np.sort(glob(os.path.join(self.img_path, seq, '*.jpg'))).tolist()
             self.sequences[seq]['images'] = images
@@ -43,6 +45,17 @@ class DataLoader(object):
             predictions = np.sort(glob(os.path.join(self.pr_path, seq, '*.png'))).tolist()
             predictions.extend([-1] * (len(images) - len(predictions)))
             self.sequences[seq]['predictions'] = predictions
+
+    def _check_directories(self):
+        sets = ['Frames', 'Annotations', 'Results']
+        dirs = [self.img_path, self.mask_path, self.pr_path]
+        for dir, set in zip(dirs, sets):
+            if not os.path.exists(dir):
+                raise FileNotFoundError(f'{set} set not found in the specified directory')
+
+            for seq in self.sequences:
+                if not os.path.exists(os.path.join(dir, seq)):
+                    raise FileNotFoundError(f'Sequences {seq} not found in {set} set')
 
     def get_contents(self, sequence):
         images = []
