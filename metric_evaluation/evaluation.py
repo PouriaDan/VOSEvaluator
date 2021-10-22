@@ -42,7 +42,7 @@ class VOSEvaluation(object):
 
     def _read_results(self, eval_path):
         if not os.path.exists(eval_path):
-            print(f"Results are no available in the specified path, evaluating model")
+            print(f"Results are not available in the specified path, evaluating model")
             return False
         else:
             print(f"Reading evaluation from specified path")
